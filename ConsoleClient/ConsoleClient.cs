@@ -13,15 +13,20 @@ namespace ConsoleClient
             RegistryHive hive = new RegistryHive(args[0]);
             Console.WriteLine("The root key's name is: " + hive.RootKey.Name);
 
+            GetInstalledSoftware(hive);
+        }
+
+        static void GetBootKey(RegistryHive hive)
+        {
             Byte[] bootkey = null;
 
             try
             {
                 bootkey = Utilities.GetBootKey(hive);
             }
-            catch (Exception e)
+            catch (HiveParserLibException e)
             {
-                Console.WriteLine("Exception thrown by GetBootKey():");
+                Console.WriteLine("Failed to extract boot key:");
                 Console.WriteLine(e.Message);
             }
 
@@ -29,6 +34,11 @@ namespace ConsoleClient
             {
                 Console.WriteLine("Boot key: " + BitConverter.ToString(bootkey));
             }
+        }
+
+        static void GetInstalledSoftware(RegistryHive hive)
+        {
+            Utilities.GetInstalledSoftware(hive);
         }
     }
 }

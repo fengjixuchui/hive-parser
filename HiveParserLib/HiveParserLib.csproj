@@ -39,7 +39,11 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="HiveParserLib.cs" />
+    <Compile Include="Exceptions.cs" />
+    <Compile Include="NodeKey.cs" />
+    <Compile Include="RegistryHive.cs" />
+    <Compile Include="Utilities.cs" />
+    <Compile Include="ValueKey.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
