@@ -1,4 +1,5 @@
 ﻿// RegistryHive.cs
+// Queryable, in-memory representation of Windows registry hive.
 
 using System;
 using System.IO;
@@ -22,13 +23,21 @@ namespace HiveParserLib
                 {
                     Byte[] buffer = reader.ReadBytes(4);
 
+                    // perform basic validation of the hive
                     if (!ValidateHiveFile(buffer))
                     {
                         throw new MalformedHiveException();
                     }
 
+                    // parse the hive base block
+                    this.BaseBlock = new BaseBlock(reader);
+
                     // fast forward to end of registry header block
-                    reader.BaseStream.Position = 4096 + 32 + 4;
+                    // skip the first four bytes of the hive bins section ('hbin')
+                    reader.BaseStream.Position = 
+                        Constant.BaseBlockSize + 
+                        this.BaseBlock.RootCellOffset + 
+                        4;
 
                     this.RootKey = new NodeKey(reader);
                 }
@@ -47,6 +56,6 @@ namespace HiveParserLib
 
         public String Filepath { get; set; }
         public NodeKey RootKey { get; set; }
-        public Boolean WasExported { get; set; }
+        public BaseBlock BaseBlock { get; set; }
     }
 }

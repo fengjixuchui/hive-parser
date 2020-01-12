@@ -39,9 +39,13 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BaseBlock.cs" />
+    <Compile Include="Constant.cs" />
+    <Compile Include="Descriptor.cs" />
     <Compile Include="Exceptions.cs" />
     <Compile Include="NodeKey.cs" />
     <Compile Include="RegistryHive.cs" />
+    <Compile Include="SecurityKey.cs" />
     <Compile Include="Utilities.cs" />
     <Compile Include="ValueKey.cs" />
   </ItemGroup>

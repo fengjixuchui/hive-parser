@@ -13,6 +13,7 @@ namespace HiveParserLib
             ReadNodeStructure(hive);
             ReadChildNodes(hive);
             ReadChildValues(hive);
+            ReadSecurityKey(hive);
         }
 
         // ReadNodeStructure
@@ -21,7 +22,7 @@ namespace HiveParserLib
         {
             Byte[] buffer = hive.ReadBytes(4);
 
-            // validate the nk header
+            // validate the NK header
             if (buffer[0] != 0x6E ||
                 buffer[1] != 0x6B)
             {
@@ -47,10 +48,10 @@ namespace HiveParserLib
             // skip metadata
             hive.BaseStream.Position += 4;
 
-            this.ValueCount = hive.ReadInt32();
-            this.ValueListOffset = hive.ReadInt32();
+            this.ValueCount        = hive.ReadInt32();
+            this.ValueListOffset   = hive.ReadInt32();
             this.SecurityKeyOffset = hive.ReadInt32();
-            this.ClassnameOffset = hive.ReadInt32();
+            this.ClassnameOffset   = hive.ReadInt32();
 
             hive.BaseStream.Position = startingOffset + 68;
 
@@ -156,9 +157,19 @@ namespace HiveParserLib
             }
         }
 
+        private void ReadSecurityKey(BinaryReader hive)
+        {
+            // reset the stream position to beginning of the SK record
+            hive.BaseStream.Position = Constant.BaseBlockSize + this.SecurityKeyOffset;
+            this.SecurityKey = new SecurityKey(hive);
+        }
+
+        public DateTime Timestamp { get; set; }
+        public NodeKey ParentNodeKey { get; set; }
+        public SecurityKey SecurityKey { get; set; }
         public List<NodeKey> ChildNodes { get; set; }
         public List<ValueKey> ChildValues { get; set; }
-        public DateTime Timestamp { get; set; }
+
         public Int32 ParentOffset { get; set; }
         public Int32 SubkeyCount { get; set; }
         public Int32 LFRecordOffset { get; set; }
@@ -171,6 +182,5 @@ namespace HiveParserLib
         public Int16 ClassnameLength { get; set; }
         public String Name { get; set; }
         public Byte[] ClassnameData { get; set; }
-        public NodeKey ParentNodeKey { get; set; }
     }
 }

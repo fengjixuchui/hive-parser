@@ -58,11 +58,23 @@ namespace HiveParserLib
             return bootkey;
         }
 
+        // GetInstalledSoftware
+        // Query the information within the SOFTWARE hive and list
+        // the installed software on the system.
         public static void GetInstalledSoftware(RegistryHive softwareHive)
         {
-            NodeKey key = GetNodeKey(softwareHive, "Microsoft\\Windows\\CurrentVersion\\Uninstall");
+            NodeKey node;
 
-            foreach (NodeKey child in key.ChildNodes)
+            try
+            {
+                node = GetNodeKey(softwareHive, "Microsoft\\Windows\\CurrentVersion\\Uninstall");
+            }
+            catch (HiveTraversalException)
+            {
+                throw new HiveParserLibException("Failed to locate necessary key");
+            }
+
+            foreach (NodeKey child in node.ChildNodes)
             {
                 Console.WriteLine("Found: " + child.Name);
                 ValueKey val = child.ChildValues.SingleOrDefault(v => v.Name == "DisplayVersion");
@@ -79,6 +91,26 @@ namespace HiveParserLib
                     String location = System.Text.Encoding.UTF8.GetString(val.Data);
                     Console.WriteLine("\tLocation: " + location);
                 }
+            }
+        }
+
+        // GetSystemUsers
+        // Query the information in the SAM hive and list system users.
+        public static void GetSystemUsers(RegistryHive samHive)
+        {
+            NodeKey node;
+            try
+            {
+                node = GetNodeKey(samHive, "SAM\\Domains\\Account\\Users\\Names");
+            }
+            catch (HiveTraversalException)
+            {
+                throw new HiveParserLibException("Failed to locate necessary key");
+            }
+
+            foreach (NodeKey child in node.ChildNodes)
+            {
+                Console.WriteLine(child.Name);
             }
         }
 
